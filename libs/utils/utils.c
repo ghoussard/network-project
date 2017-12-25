@@ -8,3 +8,24 @@ int makeSocket() {
     }
     return s;
 }
+
+struct sockaddr_in makeSockAddrIn(int port) {
+    struct sockaddr_in addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    addr.sin_addr.s_addr = INADDR_ANY;
+    return addr;
+}
+
+void printError(char *trace) {
+    perror(trace);
+    exit(EXIT_FAILURE);
+}
+
+void bindSocket(int socket, struct sockaddr_in *addr) {
+    int b = bind(socket, (struct sockaddr *) addr, sizeof(struct sockaddr_in));
+    if (b<0) {
+		perror("Echec du bind de la socket");
+		exit(EXIT_FAILURE);
+    }
+}
