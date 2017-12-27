@@ -10,7 +10,7 @@ void server(int port) {
     serverSocket = makeSocket();
 
     //définition de l'adresse de reception
-    serverAdd = makeSockAddrIn(port);
+    serverAdd = makeSockAddrIn("", port);
 
     //Rattachement de la socket sur le port d'écoute
     bindSocket(serverSocket, &serverAdd);
@@ -37,7 +37,7 @@ void trade(int serverSocket) {
         
     */
     if(fork()==0) {
-        printf("Client connecté ! \n");
+        printf("Une borne s'est connectée ! \n");
     } else {
         trade(serverSocket);
     }

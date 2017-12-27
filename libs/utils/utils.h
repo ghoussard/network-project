@@ -9,6 +9,6 @@
 #include <netinet/in.h>
 
 int makeSocket();
-struct sockaddr_in makeSockAddrIn(int port);
+struct sockaddr_in makeSockAddrIn(char *ip, int port);
 void printError(char *trace);
 void bindSocket(int socket, struct sockaddr_in *add);
