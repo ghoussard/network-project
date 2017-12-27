@@ -9,6 +9,7 @@ Server servers[NB_SERVERS] = {
 void terminal() {
 
     while(1) {
+
         int action = menu();
 
         switch(action)
@@ -70,5 +71,12 @@ void viewContract() {
 }
 
 void defineServers() {
-    printf("Configurer les serveurs distants\n\n");
+    printf("Configuration des serveurs distants\n\n");
+    for(int i = 0; i<NB_SERVERS; i++) {
+        printf("Adresse du serveur %d [%s] : ", i+1, servers[i].ip);
+        scanf("%s", servers[i].ip);
+        printf("Port [%d] : ", servers[i].port);
+        scanf("%d", &servers[i].port);
+    }
+    printf("\nConfiguration des serveurs terminée\n\n");
 }
