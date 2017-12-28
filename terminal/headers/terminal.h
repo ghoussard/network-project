@@ -6,6 +6,21 @@ typedef struct {
     int port;
 } Server;
 
+//définition d'un forfait
+typedef struct {
+    char category;
+    double price;
+    double out;
+} Package;
+
+//définition d'une voiture stationnée
+typedef struct {
+    char matriculation[7];
+    char class[7];
+    int time;
+    Package p;
+} Car;
+
 //prototypes
 void terminal();
 void queryServers(int type, char string[7]);

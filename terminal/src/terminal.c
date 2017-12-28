@@ -69,6 +69,48 @@ void queryServers(int type, char string[]) {
 
 }
 
+void queryServers2(int type, Car * car) {
+
+    //on interroge chaque serveur 1 à 1
+    for(int i = 0; i<NB_SERVERS; i++) {
+
+        //création d'une socket
+        int clientSocket = makeSocket();
+
+        //création d'une adresse
+        struct sockaddr_in distant = makeSockAddrIn(servers[i].ip, servers[i].port);
+
+        //bindSocket(clientSocket, &distant);
+
+        //on se connecte à un serveur
+        int c = connect(clientSocket,(struct sockaddr*)&distant,sizeof(distant));
+        if(c<0) {
+            printError("Erreur de connexion");
+        }
+
+        //on envoie la chaine
+        send(clientSocket, car, sizeof(Car), 0);
+        
+        //on s'endort pour attendre la réponse
+        sleep(1);
+
+        /*
+            réponse du serveur : au préalable, on appelle cette fonction avec 1 ou 2 
+            pour savoir à quelle structure de retour s'attendre
+        */
+        if(type==1) {
+            //traitement de la structure retournée pour une demande de contrat
+        } else {
+            //traitement de la structure retournée pour une consultation de contrat
+        }
+
+        //on ferme la socket client
+        close(clientSocket);
+
+    }
+
+}
+
 int menu() {
     int choix;
 
@@ -91,21 +133,23 @@ int menu() {
 void newContract() {
     printf("Nouveau contrat\n\n");
 
+    Car c;
+
     //on demande les infos nécessaires
     char class[7];
     printf("Classe du vehicule : ");
-    scanf("%s", class);
+    scanf("%s", &(c.p.category));
     char matriculation[7];
     printf("Immatriculation : ");
-    scanf("%s", matriculation);
+    scanf("%s", c.matriculation);
     int duration;
     printf("Durée estimée : ");
-    scanf("%d", &duration);
+    scanf("%d", &(c.time));
 
     printf("Demande en cours...\n");
 
     //on envoie la chaine aux serveurs
-    queryServers(1, class);
+    queryServers2(1, &c);
 }
 
 void viewContract() {
