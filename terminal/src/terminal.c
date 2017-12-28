@@ -85,14 +85,16 @@ void queryServers2(int type, Car * car) {
         //on se connecte à un serveur
         int c = connect(clientSocket,(struct sockaddr*)&distant,sizeof(distant));
         if(c<0) {
-            printError("Erreur de connexion");
+            perror("Erreur de connexion");
         }
 
         //on envoie la chaine
         send(clientSocket, car, sizeof(Car), 0);
         
         //on s'endort pour attendre la réponse
-        sleep(1);
+        //sleep(1);
+
+        recv(clientSocket, car, sizeof(Car), 0);
 
         /*
             réponse du serveur : au préalable, on appelle cette fonction avec 1 ou 2 
@@ -133,6 +135,7 @@ int menu() {
 void newContract() {
     printf("Nouveau contrat\n\n");
 
+    //on déclare une nouvelle voiture
     Car c;
 
     //on demande les infos nécessaires
@@ -150,6 +153,9 @@ void newContract() {
 
     //on envoie la chaine aux serveurs
     queryServers2(1, &c);
+
+    printf("Prix : %f\n", c.p.price);
+
 }
 
 void viewContract() {

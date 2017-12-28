@@ -44,19 +44,27 @@ void trade(int serverSocket, int range) {
         printf("J'ai reçu \"%c\" !\n", c.p.category);
 
         //si la chaine recue est égale à 1 c'est une classe sinon c'est une plaque
-        if((int)strlen(buffer)==1) {
+        
             printf("Demande de contrat demandée pour un véhicule de classe %c\n", c.p.category);
             
             //TODO: parcourir les forfaits pour trouver les prix pour la classe
             for(int i = 0; i < sizeof(packages[range-1])/sizeof(Package); i++) {
-                if(strcmp(&(packages[range-1][i].category), &buffer[0]) == 1) printf("%f", packages[range-1][i].price);
+                if(strcmp(&(packages[range-1][i].category), &(c.p.category)) == 1) {
+                     c.p.price = packages[range-1][i].price;
+                     c.p.out = packages[range-1][i].out;
+                     c.p.duration = durationMax[range-1];
+                }
             }
 
-        } else {
+            printf("Prix : %f\n", c.p.price);
+
+            send(socketClient, &c, sizeof(Car), 0);
+
+   
             printf("Consultation de contrat pour l'immatriculation %s\n", c.matriculation);
 
             //TODO: parcourir les voitures stationnées pour trouver celle correspondante à la plaque
-        }
+        
     } else {
         //on continue de trader avec les bornes
         trade(serverSocket, range);

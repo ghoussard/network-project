@@ -11,6 +11,7 @@ typedef struct {
     char category;
     double price;
     double out;
+    int duration;
 } Package;
 
 //définition d'une voiture stationnée
