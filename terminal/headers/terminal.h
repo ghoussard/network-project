@@ -1,4 +1,5 @@
 #include "../../common/common.h"
+#include "../../common/struct.h"
 
 //structure représentant un serveur
 typedef struct {
@@ -6,26 +7,12 @@ typedef struct {
     int port;
 } Server;
 
-//définition d'un forfait
-typedef struct {
-    char category;
-    double price;
-    double out;
-    int duration;
-} Package;
-
-//définition d'une voiture stationnée
-typedef struct {
-    char matriculation[7];
-    char class[7];
-    int time;
-    Package p;
-} Car;
-
 //prototypes
 void terminal();
-void queryServers(int type, char string[7]);
+void queryServers(Request * req);
 int menu();
 void newContract();
 void viewContract();
 void defineServers();
+void decodeNCRequest(Request *r);
+void decodeVCRequest(Request *r);

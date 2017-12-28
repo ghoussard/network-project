@@ -27,9 +27,9 @@ void terminal() {
 
 }
 
-void queryServers(int type, char string[]) {
+void queryServers(Request * req) {
 
-    //on interroge chaque serveur 1 à 1
+    //on interroge chaque serveur 1 par 1
     for(int i = 0; i<NB_SERVERS; i++) {
 
         //création d'une socket
@@ -46,64 +46,16 @@ void queryServers(int type, char string[]) {
             printError("Erreur de connexion");
         }
 
-        //on envoie la chaine
-        write(clientSocket, string, 7);
-        
-        //on s'endort pour attendre la réponse
-        sleep(1);
+        //on envoie la requete à compléter
+        send(clientSocket, req, sizeof(Request), 0);
 
-        /*
-            réponse du serveur : au préalable, on appelle cette fonction avec 1 ou 2 
-            pour savoir à quelle structure de retour s'attendre
-        */
-        if(type==1) {
-            //traitement de la structure retournée pour une demande de contrat
+        //on reçoit la réponse
+        recv(clientSocket, req, sizeof(Request), 0);
+
+        if(req->type == 'N') {
+            decodeNCRequest(req);
         } else {
-            //traitement de la structure retournée pour une consultation de contrat
-        }
-
-        //on ferme la socket client
-        close(clientSocket);
-
-    }
-
-}
-
-void queryServers2(int type, Car * car) {
-
-    //on interroge chaque serveur 1 à 1
-    for(int i = 0; i<NB_SERVERS; i++) {
-
-        //création d'une socket
-        int clientSocket = makeSocket();
-
-        //création d'une adresse
-        struct sockaddr_in distant = makeSockAddrIn(servers[i].ip, servers[i].port);
-
-        //bindSocket(clientSocket, &distant);
-
-        //on se connecte à un serveur
-        int c = connect(clientSocket,(struct sockaddr*)&distant,sizeof(distant));
-        if(c<0) {
-            perror("Erreur de connexion");
-        }
-
-        //on envoie la chaine
-        send(clientSocket, car, sizeof(Car), 0);
-        
-        //on s'endort pour attendre la réponse
-        //sleep(1);
-
-        recv(clientSocket, car, sizeof(Car), 0);
-
-        /*
-            réponse du serveur : au préalable, on appelle cette fonction avec 1 ou 2 
-            pour savoir à quelle structure de retour s'attendre
-        */
-        if(type==1) {
-            //traitement de la structure retournée pour une demande de contrat
-        } else {
-            //traitement de la structure retournée pour une consultation de contrat
+            decodeVCRequest(req);
         }
 
         //on ferme la socket client
@@ -133,47 +85,59 @@ int menu() {
 }
 
 void newContract() {
+
     printf("Nouveau contrat\n\n");
 
-    //on déclare une nouvelle voiture
-    Car c;
+    //on déclare un nouvel echange
+    Request r;
 
     //on demande les infos nécessaires
-    char class[7];
     printf("Classe du vehicule : ");
-    scanf("%s", &(c.p.category));
-    char matriculation[7];
+    scanf("%s", &(r.c.p.category));
     printf("Immatriculation : ");
-    scanf("%s", c.matriculation);
-    int duration;
+    scanf("%s", r.c.matriculation);
     printf("Durée estimée : ");
-    scanf("%d", &(c.time));
+    scanf("%d", &(r.c.time));
 
     printf("Demande en cours...\n");
 
-    //on envoie la chaine aux serveurs
-    queryServers2(1, &c);
+    r.type = 'N';
 
-    printf("Prix : %f\n", c.p.price);
-
+    //on envoie la requete aux serveurs
+    queryServers(&r);
 }
 
+
+/*
+    Interroge les serveurs pour un contrat
+*/
 void viewContract() {
+
     printf("Consulter un contrat\n\n");
 
+    //on déclare une nouvelle requete
+    Request r;
+
     //on demande les infos nécéssaires
-    char matriculation[7];
     printf("Immatriculation du véhicule : ");
-    scanf("%s", matriculation);
+    scanf("%s", r.c.matriculation);
 
     printf("Demande en cours...\n");
 
-    //on envoie la chaine au serveur
-    queryServers(1, matriculation);
+    r.type = 'V';
+
+    //on envoie la requete aux serveurs
+    queryServers(&r);
 }
 
+
+/*
+    Définit les serveurs
+*/
 void defineServers() {
+
     printf("Configuration des serveurs distants\n\n");
+
     //on parcours le tableau de serveurs pour les redéfinir
     for(int i = 0; i<NB_SERVERS; i++) {
         printf("Adresse du serveur %d [%s] : ", i+1, servers[i].ip);
@@ -181,5 +145,17 @@ void defineServers() {
         printf("Port [%d] : ", servers[i].port);
         scanf("%d", &servers[i].port);
     }
+
     printf("\nConfiguration des serveurs terminée\n\n");
+
+}
+
+
+void decodeNCRequest(Request *r) {
+    printf("Prix : %2.f\n", r->c.p.price);
+}
+
+
+void decodeVCRequest(Request *r) {
+
 }
