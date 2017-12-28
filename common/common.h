@@ -8,6 +8,10 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+//nombre de serveurs de parkings
+#define NB_SERVERS 3
+
+//prototype
 int makeSocket();
 struct sockaddr_in makeSockAddrIn(char *ip, int port);
 void printError(char *trace);

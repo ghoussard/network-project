@@ -1,13 +1,14 @@
-#include "../../libs/utils/utils.h"
-#define NB_SERVERS 3
+#include "../../common/common.h"
 
+//structure représentant un serveur
 typedef struct {
     char ip[20];
     int port;
 } Server;
 
+//prototypes
 void terminal();
-void connectServers();
+void queryServers(int type, char string[7]);
 int menu();
 void newContract();
 void viewContract();

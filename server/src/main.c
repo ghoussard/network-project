@@ -1,15 +1,15 @@
 #include "server.h"
-#include "../../libs/utils/utils.h"
+#include "../../common/common.h"
 
 int main(int argc, char *argv[]) {
     
     //vérification de la saisie du port
-    if(argc < 2) {
-        printError("Aucun port renseigné");
+    if(argc < 3) {
+        printError("Aucun port ou gamme renseigné");
     }
 
     //lancement du serveur
-    server(atoi(argv[1]));
+    server(atoi(argv[1]), atoi(argv[2]));
 
     return 0;
 }

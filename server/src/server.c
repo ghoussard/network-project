@@ -1,6 +1,7 @@
 #include "server.h"
+#include "data.h"
 
-void server(int port) {
+void server(int port, int range) {
     int serverSocket;
     struct sockaddr_in serverAdd;
 
@@ -21,10 +22,10 @@ void server(int port) {
     printf("Configuration terminée. En attente d'une connexion... \n");
 
     //On commence l'échange avec les clients
-    trade(serverSocket);
+    trade(serverSocket, range);
 }
 
-void trade(int serverSocket) {
+void trade(int serverSocket, int range) {
     int socketClient;
     struct sockaddr_in clientAdd;
 
@@ -32,13 +33,28 @@ void trade(int serverSocket) {
 
     //Attente de la connexion d'un client
     socketClient = accept(serverSocket, (struct sockaddr *) &clientAdd, &len);
-
-    /*
-        
-    */
+    
     if(fork()==0) {
         printf("Une borne s'est connectée ! \n");
+
+        //reception de la plaque ou de la classe du véhicule
+        char buffer[7];
+        int r = read(socketClient, buffer, 7);
+        printf("J'ai reçu \"%s\" de taille %d !\n",buffer, (int)strlen(buffer));
+
+        //si la chaine recue est égale à 1 c'est une classe sinon c'est une plaque
+        if((int)strlen(buffer)==1) {
+            printf("Demande de contrat demandée pour un véhicule de classe %s\n", buffer);
+            
+            //TODO: parcourir les forfaits pour trouver les prix pour la classe
+
+        } else {
+            printf("Consultation de contrat pour l'immatriculation %s\n", buffer);
+
+            //TODO: parcourir les voitures stationnées pour trouver celle correspondante à la plaque
+        }
     } else {
-        trade(serverSocket);
+        //on continue de trader avec les bornes
+        trade(serverSocket, range);
     }
 }
