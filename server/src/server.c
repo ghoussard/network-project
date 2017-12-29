@@ -1,8 +1,13 @@
 #include "server.h"
 #include "data.h"
 
+//gamme du serveur
 int range;
 
+
+/*
+    Fonction principale du serveur
+*/
 void server(int port, int argrange) {
     range = argrange;
 
@@ -30,6 +35,9 @@ void server(int port, int argrange) {
 }
 
 
+/*
+    Communique avec la borne
+*/
 void trade(int serverSocket) {
     int socketClient;
     struct sockaddr_in clientAdd;
@@ -70,6 +78,9 @@ void trade(int serverSocket) {
 }
 
 
+/*
+    Selectionne le forfait pour un nouveau contrat
+*/
 void processNewContract(Request *r) {
 
     printf("Demande de contrat demandée pour un véhicule de classe %c\n", r->c.p.category);
@@ -95,17 +106,38 @@ void processNewContract(Request *r) {
             }
         }
     }
-
 }
 
 
+/*
+    Affiche l'état d'un contrat selon l'immatriculation
+*/
 void processViewContract(Request *r) {
 
     printf("Consultation de contrat pour l'immatriculation %s\n", r->c.matriculation);
 
+    printf("Traitement... \n");
 
+    r->present = 0;
+    for(int i =0; i < sizeof(storedCars[range-1])/sizeof(Car); i++) {
+        if(strcmp(storedCars[range-1][i].matriculation, r->c.matriculation) == 0) {
+            printf("Immatriculation trouvée !\n");
+            r->present = 1;
+            r->c = storedCars[range-1][i];
+            r->pricetopay = getPrice(storedCars[range-1][i].p.category, storedCars[range-1][i].duration);
+            break;
+        }
+    }
+    
+    if(r->present==0) {
+        printf("Immatriculation non trouvée\n");
+    }
 }
 
+
+/*
+    Convertit les classes de voiture en int
+*/
 int convertCategorytoInt(char c) {
     switch(c) {
         case 'A':
@@ -127,4 +159,32 @@ int convertCategorytoInt(char c) {
             return -1;
             break;
     }
+}
+
+
+/*
+    Retourne le prix selon la classe et le temps de stationnement d'une voiture
+*/
+double getPrice(char c, int duration) {
+
+    double price, out;
+
+    for(int i = 0; i < sizeof(packages[range-1])/sizeof(Package); i++) {
+        if(packages[range-1][i].category == c) {
+            price = packages[range-1][i].price;
+            out = packages[range-1][i].out;
+        }
+    }
+
+    int max = maxDuration[range-1];
+
+    if(duration>max) {
+        double inprice = max*price;
+        double outprice = (duration-max)*out;
+        return inprice+outprice;
+    } else {
+        return duration*price;
+    }
+
+    return 0;
 }

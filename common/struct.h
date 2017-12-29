@@ -19,5 +19,6 @@ typedef struct {
     char serverName[25];
     int available;
     int present;
+    double pricetopay;
     Car c;
 } Request;

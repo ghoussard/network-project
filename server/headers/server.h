@@ -10,3 +10,4 @@ void trade(int serverSocket);
 void processNewContract(Request *r);
 void processViewContract(Request *r);
 int convertCategorytoInt(char c);
+double getPrice(char c, int duration);

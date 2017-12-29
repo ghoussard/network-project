@@ -1,6 +1,9 @@
 #include "terminal.h"
 #include "data.h"
 
+/*
+    Fonction principale de la borne
+*/
 void terminal() {
     //execution du menu
     while(1) {
@@ -29,6 +32,10 @@ void terminal() {
 
 }
 
+
+/*
+    Interroge les serveur 1 à 1
+*/
 void queryServers(Request * req) {
 
     //on interroge chaque serveur 1 par 1
@@ -67,6 +74,10 @@ void queryServers(Request * req) {
     }
 }
 
+
+/*
+    Menu de la borne
+*/
 int menu() {
     int choix;
 
@@ -86,6 +97,9 @@ int menu() {
     return choix;
 }
 
+/*
+    Demande de contrat
+*/
 void newContract() {
 
     printf("\nNouveau contrat :\n\n");
@@ -111,11 +125,11 @@ void newContract() {
 
 
 /*
-    Interroge les serveurs pour un contrat
+    Consultation de contrat
 */
 void viewContract() {
 
-    printf("Consulter un contrat\n\n");
+    printf("\nConsulter un contrat :\n\n");
 
     //on déclare une nouvelle requete
     Request r;
@@ -138,7 +152,7 @@ void viewContract() {
 */
 void defineServers() {
 
-    printf("Configuration des serveurs distants\n\n");
+    printf("\nConfiguration des serveurs distants : \n\n");
 
     //on parcours le tableau de serveurs pour les redéfinir
     for(int i = 0; i<NB_SERVERS; i++) {
@@ -153,6 +167,9 @@ void defineServers() {
 }
 
 
+/*
+    Décode la réponse reçue à une demande de contrat
+*/
 void decodeNCRequest(Request *r) {
     if(r->available<1) {
         printf("Pas de place disponible pour cette classe\n");
@@ -185,6 +202,16 @@ void decodeNCRequest(Request *r) {
 }
 
 
+/*
+    Décode la requete de réponse à une consultation de contrat
+*/
 void decodeVCRequest(Request *r) {
-
+    if(r->present==0) {
+        printf("Cette immatriculation n'est pas présente dans ce parking\n");
+    } else {
+        printf("Immatriculation présente :\n");
+        printf("Classe du véhicule : %c\n", r->c.p.category);
+        printf("Durée de stationnement : %d\n", r->c.duration);
+        printf("Prix à payer : %.2f€\n", r->pricetopay);
+    }
 }

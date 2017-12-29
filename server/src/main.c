@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
     
-    //vérification de la saisie du port
+    //vérification de la saisie du port et de la gamme
     if(argc < 3) {
         printError("Aucun port ou gamme renseigné");
     }
