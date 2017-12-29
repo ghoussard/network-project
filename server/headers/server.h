@@ -9,3 +9,4 @@ void server(int port, int argrange);
 void trade(int serverSocket);
 void processNewContract(Request *r);
 void processViewContract(Request *r);
+int convertCategorytoInt(char c);

@@ -23,6 +23,8 @@ void terminal() {
                 exit(0);
         }
 
+    printf("\n\n");
+
     }
 
 }
@@ -38,6 +40,7 @@ void queryServers(Request * req) {
         //création d'une adresse
         struct sockaddr_in distant = makeSockAddrIn(servers[i].ip, servers[i].port);
 
+        //Rattachement de la socket sur le port d'écoute
         //bindSocket(clientSocket, &distant);
 
         //on se connecte à un serveur
@@ -52,6 +55,7 @@ void queryServers(Request * req) {
         //on reçoit la réponse
         recv(clientSocket, req, sizeof(Request), 0);
 
+        printf("\nRéponse du parking \"%s\" : \n", req->serverName);
         if(req->type == 'N') {
             decodeNCRequest(req);
         } else {
@@ -60,9 +64,7 @@ void queryServers(Request * req) {
 
         //on ferme la socket client
         close(clientSocket);
-
     }
-
 }
 
 int menu() {
@@ -86,20 +88,20 @@ int menu() {
 
 void newContract() {
 
-    printf("Nouveau contrat\n\n");
+    printf("\nNouveau contrat :\n\n");
 
     //on déclare un nouvel echange
     Request r;
 
     //on demande les infos nécessaires
-    printf("Classe du vehicule : ");
+    printf("Classe du vehicule [A-E] : ");
     scanf("%s", &(r.c.p.category));
-    printf("Immatriculation : ");
+    printf("Immatriculation [AAXXXAA] : ");
     scanf("%s", r.c.matriculation);
     printf("Durée estimée : ");
-    scanf("%d", &(r.c.time));
+    scanf("%d", &(r.c.duration));
 
-    printf("Demande en cours...\n");
+    printf("\nDemande en cours...\n");
 
     r.type = 'N';
 
@@ -122,7 +124,7 @@ void viewContract() {
     printf("Immatriculation du véhicule : ");
     scanf("%s", r.c.matriculation);
 
-    printf("Demande en cours...\n");
+    printf("\nDemande en cours...\n");
 
     r.type = 'V';
 
@@ -152,7 +154,34 @@ void defineServers() {
 
 
 void decodeNCRequest(Request *r) {
-    printf("Prix : %2.f\n", r->c.p.price);
+    if(r->available<1) {
+        printf("Pas de place disponible pour cette classe\n");
+    } else {
+        printf("Cout de stationnement pour le véhicule immatriculé %s de classe %c :\n", r->c.matriculation, r->c.p.category);
+        printf("%.2f€/H pendant %dH, puis %.2f€/H\n", r->c.p.price, r->c.p.maxDuration, r->c.p.out);
+        if(r->c.duration>r->c.p.maxDuration) {
+            double price = r->c.p.maxDuration*r->c.p.price;
+            double outprice = (r->c.duration-r->c.p.maxDuration)*r->c.p.out;
+            printf("%dH : %.2f€\n", r->c.duration, price+outprice);
+            printf("%dH : %.2f€\n", r->c.duration+1, price+outprice+r->c.p.out);
+            printf("%dH : %.2f€\n", r->c.duration*2, price+outprice+r->c.p.out*r->c.duration);
+        } else {
+            double price = r->c.duration*r->c.p.price;
+            printf("%dH : %.2f€\n", r->c.duration, price);
+            if(r->c.duration+1>r->c.p.maxDuration) {
+                printf("%dH : %.2f€\n", r->c.duration+1, price+r->c.p.out);
+            } else {
+                printf("%dH : %.2f€\n", r->c.duration+1, price+r->c.p.price);
+            }
+            if(r->c.duration*2>r->c.p.maxDuration) {
+                double price = r->c.p.maxDuration*r->c.p.price;
+                double outprice = (r->c.duration*2-r->c.p.maxDuration)*r->c.p.out;
+                printf("%dH : %.2f€\n", r->c.duration*2, price+outprice);
+            } else {
+                printf("%dH : %.2f€\n", r->c.duration*2, price+r->c.p.price*r->c.duration);
+            }
+        }
+    }
 }
 
 

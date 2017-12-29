@@ -3,19 +3,21 @@ typedef struct {
     char category;
     double price;
     double out;
-    int duration;
+    int maxDuration;
 } Package;
 
 //définition d'une voiture stationnée
 typedef struct {
     char matriculation[7];
-    int time;
+    int duration;
     Package p;
 } Car;
 
 //définition d'une requete serveur
 typedef struct {
     char type;
-    char trace[20];
+    char serverName[25];
+    int available;
+    int present;
     Car c;
 } Request;
