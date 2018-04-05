@@ -1,7 +1,7 @@
 # network-project
 Network project in C for my studies.
 
-## Structure des programmes compilation et exécution
+## Compilation et exécution
 
 Le dossier common contient les déclarations et variables communes au serveur ainsi qu’à la
 borne. Le dossier server contient le code du serveur, ainsi qu’un Makefile pour le compiler,
